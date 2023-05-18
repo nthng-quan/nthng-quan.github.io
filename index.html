@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Group 1 - CO2 Emissions Data Visualization</title>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="#page-top">CO2 Emissions Visualization</a>
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="#about">Why ?</a></li>
+                        <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
+                            <ul class="navbar-nav">
+                              <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                  Dashboards
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarDarkDropdownMenuLink">
+                                  <li><a class="dropdown-item" href="./dashboards/statistics.html">Statistical analysis</a></li>
+                                  <li><a class="dropdown-item" href="./dashboards/co2emissions.html">CO2 Emissions</a></li>
+                                  <li><a class="dropdown-item" href="./dashboards/co2percapita.html">CO2 Emissions per capita</a></li>
+                                  <li><a class="dropdown-item" href="./dashboards/production_consumption.html">Production consumption</a></li>
+                                  <li><a class="dropdown-item" href="./dashboards/vietnamdetails.html">Viet Nam details</a></li>
+                                </ul>
+                              </li>
+                            </ul>
+                        </div>
+                        <li class="nav-item"><a class="nav-link" href="#dataset">Dataset</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Masthead-->
+        <header class="masthead">
+            <div class="container px-4 px-lg-5 d-flex h-100 align-items-center justify-content-center">
+                <div class="d-flex justify-content-center">
+                    <div class="text-center">
+                        <h1 class="mx-auto my-0 text-uppercase">CO2 Emissions</h1>
+                        <h2 class="text-white-50 mx-auto mt-2 mb-5">The world is becoming more modernized by the year, and with this becoming all the more polluted.</h2>
+                        <a class="btn btn-primary" href="#about">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- About-->
+        <section class="about-section text-center" id="about">
+            <div class="container px-4 px-lg-5">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-lg-8">
+                        <h2 class="text-white mb-4">Why we must have awareness of CO2 emissions</h2>
+                        <p class="text-white-50">
+                            CO2 emission is a major cause of climate change and air pollution, which have serious impacts on our health and environment. CO2 emission comes from burning fossil fuels, manufacturing goods, and cutting down forests. These activities release greenhouse gases that trap heat in the atmosphere and warm up the planet. This leads to more extreme weather events, such as heat waves, droughts, floods, and storms. It also increases the formation of smog, which can harm our respiratory system and cause diseases. Moreover, CO2 emission affects the habitats of many animals and plants, and threatens biodiversity. Therefore, we must have awareness of CO2 emission and take action to reduce it. We can use renewable energy sources, such as wind and solar power, instead of fossil fuels. We can also conserve energy, recycle materials, and plant more trees. By doing so, we can protect our health and environment from the effects of CO2 emission.
+                        </p>
+                        <p> <img src="assets/img/why.jpg" alt="CO2 emission" width="100%"> </p>
+                        <p> 
+                            <a class="btn btn-primary" href="#dataset">Dataset</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Projects-->
+        <section class="projects-section bg-light" id="dataset">
+            <div class="container px-4 px-lg-5">
+                <!-- Featured Project Row-->
+                <div class="row gx-0 mb-4 mb-lg-5 align-items-center">
+                    <!-- <div class="col-xl-8 col-lg-7"><img class="img-fluid mb-3 mb-lg-0" src="assets/img/bg-masthead.jpg" alt="..." /></div> -->
+                    <div class="col-xl-12 col-lg-5">
+                        <div class="featured-text text-center text-lg-center">
+                            <h4>About the dataset</h4>
+                            <p class="text-black-50 mb-0">This data was pulled from the US Energy Administration and joined together for an easier analysis. Its a collection of some big factors that play into C02 Emissions, with everything from the Production and Consumption of each type of major energy source for each country and its pollution rating each year. It also includes each countries GDP, Population, Energy intensity per capita (person), and Energy intensity per GDP (per person GDP). All the data spans all the way from the 1980's to 2020.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container px-4 px-lg-5">
+                    <div class="text-center text-lg-center">
+                        <h4>Feature Descriptions</br></br></h4>
+                    </div>
+                    <table class="table">
+                        <tbody>
+                          <tr>
+                            <td><strong>Country</strong></td>
+                            <td>Country in question</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Energy_type</strong></td>
+                            <td>Type of energy source</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Year</strong></td>
+                            <td>Year the data was recorded</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Energy_consumption</strong></td>
+                            <td>Amount of Consumption for the specific energy source, measured (quad Btu)</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Energy_production</strong></td>
+                            <td>Amount of Production for the specific energy source, measured (quad Btu)</td>
+                          </tr>
+                          <tr>
+                            <td><strong>GDP</strong></td>
+                            <td>Country's GDP at purchasing power parities, measured (Billion 2015$ PPP)</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Population</strong></td>
+                            <td>Population of specific Country, measured (Mperson)</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Energy_intensity_per_capita</strong></td>
+                            <td>Energy intensity is a measure of the energy inefficiency of an economy. It is calculated as units of energy per unit of capita (capita = individual person), measured (MMBtu/person)</td>
+                          </tr>
+                          <tr>
+                            <td><strong>Energy_intensity_by_GDP</strong></td>
+                            <td>Energy intensity is a measure of the energy inefficiency of an economy. It is calculated as units of energy per unit of GDP, measured (1000 Btu/2015$ GDP PPP)</td>
+                          </tr>
+                          <tr>
+                            <td><strong>CO2_emission</strong></td>
+                            <td>The amount of CO2 emitted, measured (MMtonnes CO2)</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <div class="text-center text-lg-center">
+                        <p>
+                        </br></br>You can find the dataset here 
+                        <a href="https://www.kaggle.com/datasets/lobosi/c02-emission-by-countrys-grouth-and-population">
+                            <img src="./assets/img/kaggle.png" alt="Kaggle" width="5%", height="5%">
+                        </a>
+                        </p>
+                    </div>
+                  </div>
+            </div>
+        
+              
+        </section>
+        <!-- Footer-->
+        <footer class="footer bg-black small text-center text-white-50"><div class="container px-4 px-lg-5">Group 1 - Final Project Data Visualization - HCMUS -  CSC10108</div></footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="../js/scripts.js"></script>
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <!-- * *                               SB Forms JS                               * *-->
+        <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
+        <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
+        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+    </body>
+</html>
