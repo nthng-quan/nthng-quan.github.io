@@ -1,38 +1,14 @@
 body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: #f7f7f0;
-}
-
-.body-padding {
+  /* margin: 0; */
   margin: 50px 0px 0px 0px;
   font-family: Arial, Helvetica, sans-serif;
   background-color: #f7f7f0;
 }
 
-.topnav {
-  display: flex;
-  justify-content: center;
-  background-color: #333;
-}
-
-.topnav a {
-  /* float: left; */
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
+.body-padding {
+  margin: 60px 0px 0px 0px;
+  font-family: Arial, Helvetica, sans-serif;
   background-color: #f7f7f0;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #f28e2b;
-  color: white;
 }
 
 /* DASHBOARD */
