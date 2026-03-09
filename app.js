@@ -321,9 +321,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (Math.abs(reconciled - original) < 0.001) {
                     return `<span class="val-matched">${reconciled.toFixed(2)}</span>`;
                 }
+                const diff = reconciled - original;
+                const sign = diff > 0 ? '+' : '';
                 return `<div class="val-diff">
                             <span class="val-original" title="Original">${original.toFixed(2)}</span>
-                            <span class="val-reconciled" title="Adjusted">${reconciled.toFixed(2)}</span>
+                            <span class="val-reconciled" title="Adjusted">
+                                ${reconciled.toFixed(2)} 
+                                <span style="font-size: 0.65rem; color: ${diff > 0 ? '#22c55e' : '#ef4444'}; margin-left: 2px;">(${sign}${diff.toFixed(2)})</span>
+                            </span>
                         </div>`;
             };
 
@@ -350,13 +355,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const originalVal = data.original_totals[c.key];
             const reconciledVal = data.reconciled_totals[c.key];
             const targetVal = data.expected_totals[c.key];
+            
+            const diff = reconciledVal - originalVal;
+            let reconciledHtml = reconciledVal.toFixed(2);
+            if (Math.abs(diff) >= 0.001) {
+                const sign = diff > 0 ? '+' : '';
+                reconciledHtml += ` <span style="font-size: 0.65rem; color: ${diff > 0 ? '#22c55e' : '#ef4444'}; margin-left: 2px;">(${sign}${diff.toFixed(2)})</span>`;
+            }
 
             const trSum = document.createElement('tr');
             trSum.className = 'summary-row';
             trSum.innerHTML = `
                 <td><strong>${c.label}</strong></td>
                 <td class="right val-original">${originalVal.toFixed(2)}</td>
-                <td class="right val-reconciled">${reconciledVal.toFixed(2)}</td>
+                <td class="right val-reconciled">${reconciledHtml}</td>
                 <td class="right"><strong>${targetVal.toFixed(2)} ${data.currency}</strong></td>
                 <td class="right status-cell ${Math.abs(reconciledVal - targetVal) < 0.011 ? 'valid' : 'invalid'}">
                     ${Math.abs(reconciledVal - targetVal) < 0.011 ? 'MATCHED' : 'DISCREPANCY'}
