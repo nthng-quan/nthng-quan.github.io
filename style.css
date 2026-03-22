@@ -107,6 +107,82 @@ body {
     color: white;
 }
 
+/* Delta Settings UI */
+.delta-settings {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    flex-shrink: 0;
+}
+
+.delta-settings h3 {
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1rem;
+    margin-bottom: 0.8rem;
+    margin-top: 0;
+}
+
+.delta-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+    flex-wrap: nowrap;
+}
+
+.delta-input-wrap {
+    display: flex;
+    align-items: center;
+    background: rgba(0,0,0,0.2);
+    border-radius: 6px;
+    padding: 0.2rem 0.4rem;
+    border: 1px solid rgba(255,255,255,0.1);
+    min-width: 0;
+}
+
+.delta-input-wrap:focus-within {
+    border-color: var(--accent-primary);
+}
+
+.delta-input-wrap label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    margin: 0 0.3rem;
+}
+
+.delta-input-wrap input {
+    background: transparent;
+    border: none;
+    color: white;
+    width: 55px;
+    text-align: center;
+    font-size: 0.85rem;
+    font-family: inherit;
+    outline: none;
+    padding: 0;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.delta-input-wrap input::-webkit-outer-spin-button,
+.delta-input-wrap input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.delta-sep {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    padding: 0 0.5rem;
+    white-space: nowrap;
+}
+
 .invoice-nav {
     display: flex;
     flex-direction: column;
@@ -389,6 +465,7 @@ tr:last-child td {
 .status-cell { font-weight: 700; font-size: 0.7rem; }
 .status-cell.valid { color: var(--success); }
 .status-cell.invalid { color: var(--error); }
+.status-cell.warn { color: #f59e0b; }
 
 .fade-in {
     animation: fadeIn 0.5s ease;

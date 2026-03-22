@@ -41,7 +41,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Initialization ---
 
+    function setupDeltaSliders() {
+        const numMin = document.getElementById('delta-min');
+        const numMax = document.getElementById('delta-max');
+
+        let updateTimeout;
+        const triggerUpdate = () => {
+            clearTimeout(updateTimeout);
+            updateTimeout = setTimeout(async () => {
+                const savedInvoices = [...allInvoices];
+                const activeEl = document.querySelector('.invoice-item.active');
+                const activeFilename = activeEl ? activeEl.querySelector('.file-name').textContent : null;
+                
+                allInvoices = [];
+                for (let inv of savedInvoices) {
+                    await processXMLFromString(inv.raw_xml, inv.filename);
+                }
+                renderList(allInvoices);
+
+                if (activeFilename) {
+                    const newIndex = allInvoices.findIndex(inv => inv.filename === activeFilename);
+                    if (newIndex !== -1) {
+                        const newEl = invoiceList.children[newIndex];
+                        selectInvoice(newIndex, newEl);
+                    }
+                } else if (allInvoices.length > 0) {
+                    selectInvoice(0, invoiceList.children[0]);
+                }
+            }, 300);
+        };
+
+        numMin.addEventListener('input', () => {
+            let val = parseFloat(numMin.value) || 0;
+            let maxVal = parseFloat(numMax.value) || 0.10;
+            if (val > maxVal) numMin.value = maxVal.toFixed(2);
+            triggerUpdate();
+        });
+
+        numMax.addEventListener('input', () => {
+            let val = parseFloat(numMax.value) || 0.10;
+            let minVal = parseFloat(numMin.value) || 0;
+            if (val < minVal) numMax.value = minVal.toFixed(2);
+            triggerUpdate();
+        });
+    }
+
     async function init() {
+        setupDeltaSliders();
         await processXMLFromString(MOCK_XML_1, "demo_invoice.xml");
 
         renderList(allInvoices);
@@ -158,6 +204,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const diffNet = parseFloat((totalNetExpected - originalSumNet).toFixed(2));
         const diffTax = parseFloat((totalTaxExpected - originalSumTax).toFixed(2));
 
+        const deltaMin = parseFloat(document.getElementById('delta-min').value) || 0.01;
+        const deltaMax = parseFloat(document.getElementById('delta-max').value) || 0.10;
+
+        function rangeStatus(diff) {
+            const abs = Math.abs(diff);
+            if (abs < 0.001)    return 'balanced';
+            if (abs < deltaMin) return 'below_min';
+            if (abs > deltaMax) return 'above_max';
+            return 'in_range';
+        }
+
+        const netRangeStatus  = rangeStatus(diffNet);
+        const taxRangeStatus  = rangeStatus(diffTax);
+
         function reconcileComponent(items, diff, key) {
             if (Math.abs(diff) < 0.001 || items.length === 0) return;
             
@@ -227,8 +287,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        reconcileComponent(positions, diffNet, 'net');
-        reconcileComponent(positions, diffTax, 'tax');
+        if (netRangeStatus === 'in_range') reconcileComponent(positions, diffNet, 'net');
+        if (taxRangeStatus === 'in_range') reconcileComponent(positions, diffTax, 'tax');
 
         const reconciledSumNet = positions.reduce((sum, p) => sum + p.net, 0);
         const reconciledSumTax = positions.reduce((sum, p) => sum + p.tax, 0);
@@ -285,7 +345,10 @@ document.addEventListener('DOMContentLoaded', () => {
             reconciled_totals: { net: reconciledSumNet, tax: reconciledSumTax, gross: reconciledSumGross },
             currency: currency,
             items: positions,
-            modified_xml: modifiedXmlString
+            modified_xml: modifiedXmlString,
+            delta_range: { min: deltaMin, max: deltaMax },
+            range_status: { net: netRangeStatus, tax: taxRangeStatus },
+            raw_xml: xmlString
         };
 
         allInvoices.push(data);
@@ -353,6 +416,9 @@ document.addEventListener('DOMContentLoaded', () => {
             deltaEl.classList.add('zero');
         }
         
+        clone.getElementById('det-delta-range').textContent =
+            `${data.delta_range.min.toFixed(2)} – ${data.delta_range.max.toFixed(2)}`;
+
         const statusPill = clone.getElementById('det-status-pill');
         const mismatch = Math.abs(total - data.reconciled_totals.gross) > 0.001;
         statusPill.textContent = mismatch ? 'Mismatch' : 'Reconciled ✓';
@@ -400,12 +466,24 @@ document.addEventListener('DOMContentLoaded', () => {
             const originalVal = data.original_totals[c.key];
             const reconciledVal = data.reconciled_totals[c.key];
             const targetVal = data.expected_totals[c.key];
-            
+            const rs = data.range_status[c.key]; // 'balanced'|'below_min'|'in_range'|'above_max'|undefined (gross)
+
             const diff = reconciledVal - originalVal;
             let reconciledHtml = reconciledVal.toFixed(2);
             if (Math.abs(diff) >= 0.001) {
                 const sign = diff > 0 ? '+' : '';
                 reconciledHtml += ` <span style="font-size: 0.65rem; color: ${diff > 0 ? '#22c55e' : '#ef4444'}; margin-left: 2px;">(${sign}${diff.toFixed(2)})</span>`;
+            }
+
+            let statusClass, statusText;
+            if (Math.abs(reconciledVal - targetVal) < 0.011) {
+                statusClass = 'valid';  statusText = 'MATCHED';
+            } else if (rs === 'above_max') {
+                statusClass = 'warn';   statusText = 'ABOVE MAX';
+            } else if (rs === 'below_min') {
+                statusClass = 'warn';   statusText = 'BELOW MIN';
+            } else {
+                statusClass = 'invalid'; statusText = 'DISCREPANCY';
             }
 
             const trSum = document.createElement('tr');
@@ -415,9 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td class="right val-original">${originalVal.toFixed(2)}</td>
                 <td class="right val-reconciled">${reconciledHtml}</td>
                 <td class="right"><strong>${targetVal.toFixed(2)} ${data.currency}</strong></td>
-                <td class="right status-cell ${Math.abs(reconciledVal - targetVal) < 0.011 ? 'valid' : 'invalid'}">
-                    ${Math.abs(reconciledVal - targetVal) < 0.011 ? 'MATCHED' : 'DISCREPANCY'}
-                </td>
+                <td class="right status-cell ${statusClass}">${statusText}</td>
             `;
             summaryBody.appendChild(trSum);
         });

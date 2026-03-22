@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XML Inspector</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=4">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -23,6 +23,22 @@
                     </div>
                 </div>
             </div>
+            <div class="delta-settings">
+                <h3>Δ Range</h3>
+                <div class="delta-row">
+                    <div class="delta-input-wrap">
+                        <label for="delta-min">a</label>
+                        <input type="number" id="delta-min" value="0.01" step="0.01" min="0">
+                    </div>
+                    <span class="delta-sep">≤ x ≤</span>
+                    <div class="delta-input-wrap">
+                        <input type="number" id="delta-max" value="0.10" step="0.01" min="0">
+                        <label for="delta-max">b</label>
+                    </div>
+                </div>
+
+            </div>
+
             <nav class="invoice-nav">
                 <div class="search-container">
                     <input type="text" placeholder="Search Invoices..." id="search">
@@ -69,6 +85,10 @@
                     <div class="stat">
                         <label>Delta</label>
                         <div id="det-delta" class="value delta">--</div>
+                    </div>
+                    <div class="stat">
+                        <label>Range</label>
+                        <div id="det-delta-range" class="value range-val">-- – --</div>
                     </div>
                 </div>
             </div>
