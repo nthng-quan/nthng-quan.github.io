@@ -114,7 +114,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const totalNetExpected = getAmount(invoiceNode, "amountBeforeTax > amount");
         const totalGrossExpected = getAmount(invoiceNode, "amountAfterTax > amount");
-        const totalTaxExpected = getAmount(invoiceNode, "taxes > taxAmount > amount");
+        // Sum all <taxes> elements — one per tax bracket
+        const totalTaxExpected = parseFloat(
+            Array.from(invoiceNode.querySelectorAll("taxes > taxAmount > amount"))
+                .reduce((sum, el) => sum + parseFloat(el.textContent.trim()), 0)
+                .toFixed(2)
+        );
         const currency = getTagText(invoiceNode, "amountAfterTax > currencyCode", "");
         const invNum = getTagText(invoiceNode, "invoiceNumber");
         const hotelId = getTagText(invoiceNode, "hotelId");
@@ -195,10 +200,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     const errChange = newErr - currentErr;
                     const weight = key === 'net' ? p.net : p.tax;
 
-                    // Tie-breaker: prioritize smaller absolute values to minimize relative distortion
-                    if (errChange < minErrorChange || (Math.abs(errChange - minErrorChange) < 0.0001 && Math.abs(weight) < Math.abs(items[bestIdx][key]))) {
+                    const currentMod = Math.abs(p[key] - p['original_' + key]);
+                    const bestMod = Math.abs(items[bestIdx][key] - items[bestIdx]['original_' + key]);
+
+                    if (errChange < minErrorChange - 0.0001) {
                         minErrorChange = errChange;
                         bestIdx = i;
+                    } else if (Math.abs(errChange - minErrorChange) <= 0.0001) {
+                        // Tie-breaker 1: prioritize spreading adjustments over multiple items
+                        if (currentMod < bestMod) {
+                            minErrorChange = errChange;
+                            bestIdx = i;
+                        } 
+                        // Tie-breaker 2: prioritize smaller underlying values
+                        else if (Math.abs(currentMod - bestMod) < 0.001) {
+                            if (Math.abs(weight) < Math.abs(items[bestIdx][key])) {
+                                minErrorChange = errChange;
+                                bestIdx = i;
+                            }
+                        }
                     }
                 }
 
@@ -229,10 +249,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const invoiceNodeTotalNet = invoiceNode.querySelector("amountBeforeTax > amount");
         if(invoiceNodeTotalNet) invoiceNodeTotalNet.textContent = reconciledSumNet.toFixed(2);
-        const invoiceNodeTotalTax = invoiceNode.querySelector("taxes > taxAmount > amount");
-        if(invoiceNodeTotalTax) invoiceNodeTotalTax.textContent = reconciledSumTax.toFixed(2);
         const invoiceNodeTotalGross = invoiceNode.querySelector("amountAfterTax > amount");
         if(invoiceNodeTotalGross) invoiceNodeTotalGross.textContent = reconciledSumGross.toFixed(2);
+        // Update each tax bracket's totals separately using reconciled position values
+        invoiceNode.querySelectorAll("taxes").forEach(taxesNode => {
+            const taxRateEl = taxesNode.querySelector("taxRate");
+            if (!taxRateEl) return;
+            const bracketRate = parseFloat(taxRateEl.textContent.trim());
+            const bracketPositions = positions.filter(p => parseFloat(p.tax_rate) === bracketRate);
+            const bracketNet   = parseFloat(bracketPositions.reduce((s, p) => s + p.net,   0).toFixed(2));
+            const bracketTax   = parseFloat(bracketPositions.reduce((s, p) => s + p.tax,   0).toFixed(2));
+            const bracketGross = parseFloat(bracketPositions.reduce((s, p) => s + p.gross, 0).toFixed(2));
+            const tn = taxesNode.querySelector("taxAmount > amount");
+            if (tn) tn.textContent = bracketTax.toFixed(2);
+            const nn = taxesNode.querySelector("netAmount > amount");
+            if (nn) nn.textContent = bracketNet.toFixed(2);
+            const gn = taxesNode.querySelector("grossAmount > amount");
+            if (gn) gn.textContent = bracketGross.toFixed(2);
+        });
+
+        // Remove exchangeAmount before export as requested
+        Array.from(xmlDoc.querySelectorAll("exchangeAmount")).forEach(el => {
+            if (el.parentNode) el.parentNode.removeChild(el);
+        });
 
         const serializer = new XMLSerializer();
         const modifiedXmlString = serializer.serializeToString(xmlDoc);
@@ -254,14 +293,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- UI Rendering ---
 
+    function escapeHtml(str) {
+        const d = document.createElement('div');
+        d.appendChild(document.createTextNode(String(str)));
+        return d.innerHTML;
+    }
+
     function renderList(invoices) {
         invoiceList.innerHTML = '';
         invoices.forEach((inv, index) => {
             const li = document.createElement('li');
             li.className = 'invoice-item';
             li.innerHTML = `
-                <span class="file-name">${inv.filename}</span>
-                <div class="meta-info">${inv.invoice_number} | ${inv.expected_totals.gross.toFixed(2)} ${inv.currency}</div>
+                <span class="file-name">${escapeHtml(inv.filename)}</span>
+                <div class="meta-info">${escapeHtml(inv.invoice_number)} | ${inv.expected_totals.gross.toFixed(2)} ${escapeHtml(inv.currency)}</div>
             `;
             li.onclick = () => selectInvoice(index, li);
             invoiceList.appendChild(li);
@@ -333,9 +378,9 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             tr.innerHTML = `
-                <td>${item.id}</td>
-                <td>${item.description}</td>
-                <td class="right" style="color: var(--text-dim); font-size: 0.8rem;">${(item.tax_rate || '0.00')}%</td>
+                <td>${escapeHtml(item.id)}</td>
+                <td>${escapeHtml(item.description)}</td>
+                <td class="right" style="color: var(--text-dim); font-size: 0.8rem;">${escapeHtml(item.tax_rate || '0.00')}%</td>
                 <td class="right">${formatValue(item.net, item.original_net)}</td>
                 <td class="right">${formatValue(item.tax, item.original_tax)}</td>
                 <td class="right">${formatValue(item.gross, item.original_gross)}</td>
